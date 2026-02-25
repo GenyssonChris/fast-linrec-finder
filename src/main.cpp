@@ -32,7 +32,6 @@ int main() {
         
         std::cout << "Generating test sequence" << std::endl;
 
-        srand(time(0));
         seq.push_back(1.0);
         seq.push_back(0.0);
         seq.push_back(1.0);
